@@ -2,14 +2,14 @@
 
 The `ui` directory contains the following subdirectories:
 
-* `mantine-ui`: The new (3.x) React-based web UI for Prometheus.
-* `react-app`: The old (2.x) React-based web UI for Prometheus.
-* `modules`: Shared npm modules for PromQL code editing via [CodeMirror](https://codemirror.net/), which are used by both React apps and external consumers (like [Thanos](https://thanos.io/)).
-* `static`: The build output directory for both React apps. The files in this directory are compiled into the Prometheus binary unless built-in assets are disabled (see the section on this below).
+* `mantine-ui`: The new (3.x) React-based web UI for AI MonitorIQ.
+* `react-app`: The old (2.x) React-based web UI for AI MonitorIQ.
+* `modules`: Shared npm modules for MonitorQL code editing via [CodeMirror](https://codemirror.net/), which are used by both React apps and external consumers (like [Thanos](https://thanos.io/)).
+* `static`: The build output directory for both React apps. The files in this directory are compiled into the AI MonitorIQ binary unless built-in assets are disabled (see the section on this below).
 
-The directory also contains helper files for building and compiling the UI assets for both React application versions into the Prometheus binary.
+The directory also contains helper files for building and compiling the UI assets for both React application versions into the AI MonitorIQ binary.
 
-Prometheus serves the new UI by default, but you can still use the Prometheus server feature flag `--enable-feature=old-ui` to switch back to the old UI for the time being.
+AI MonitorIQ serves the new UI by default, but you can still use the AI MonitorIQ server feature flag `--enable-feature=old-ui` to switch back to the old UI for the time being.
 
 While both the `mantine-ui` and `modules` directories are part of the same shared npm workspace, the old UI in the `react-app` directory has been separated out of the workspace setup, since its dependencies were too incompatible to integrate.
 
@@ -44,15 +44,15 @@ You can start a development server for the new React UI outside of a running Pro
 
 This will start the development server on http://localhost:5173/. The page will hot-reload if you make edits to the source code. You will also see any lint errors in the console.
 
-**NOTE**: Hot reloads will only work for code in the `mantine-ui` and `react-app` folders. For changes in the `module` directory (the CodeMirror PromQL editor code) to become visible, you will need to run `npm run build:module` from `web/ui`.
+**NOTE**: Hot reloads will only work for code in the `mantine-ui` and `react-app` folders. For changes in the `module` directory (the CodeMirror MonitorQL editor code) to become visible, you will need to run `npm run build:module` from `web/ui`.
 
 ### Proxying API requests to a Prometheus backend server
 
-To do anything useful, the web UI requires a Prometheus backend to fetch and display data from. Due to a proxy configuration in the `mantine-ui/vite.config.ts` file, the development web server proxies any API requests from the UI to `http://localhost:9090`. This allows you to run a normal Prometheus server to handle API requests, while iterating separately on the UI:
+To do anything useful, the web UI requires an AI MonitorIQ backend to fetch and display data from. Due to a proxy configuration in the `mantine-ui/vite.config.ts` file, the development web server proxies any API requests from the UI to `http://localhost:9090`. This allows you to run a normal AI MonitorIQ server to handle API requests, while iterating separately on the UI:
 
-    [browser] ----> [localhost:5173 (dev server)] --(proxy API requests)--> [localhost:9090 (Prometheus)]
+    [browser] ----> [localhost:5173 (dev server)] --(proxy API requests)--> [localhost:9090 (AI MonitorIQ)]
 
-If you prefer, you can also change the `mantine-ui/vite.config.ts` file to point to a any other Prometheus server. Note that connecting to an HTTPS-based server will require an additional `changeOrigin: true` setting. For example, to connect to the demo server at `https://prometheus.demo.prometheus.io/`, you could change the `vite.config.ts` file to:
+If you prefer, you can also change the `mantine-ui/vite.config.ts` file to point to a any other AI MonitorIQ server. Note that connecting to an HTTPS-based server will require an additional `changeOrigin: true` setting. For example, to connect to the demo server at `https://aimonitoriq.demo.aimonitoriq.io/`, you could change the `vite.config.ts` file to:
 
 ```typescript
 import { defineConfig } from "vite";
@@ -65,11 +65,11 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: "https://prometheus.demo.prometheus.io/",
+        target: "https://aimonitoriq.demo.aimonitoriq.io/",
         changeOrigin: true,
       },
       "/-/": {
-        target: "https://prometheus.demo.prometheus.io/",
+        target: "https://aimonitoriq.demo.aimonitoriq.io/",
         changeOrigin: true,
       },
     },
@@ -102,7 +102,7 @@ To build a production-optimized version of both React app versions to the `stati
 
     npm run build
 
-**NOTE:** You will likely not need to do this directly. Instead, this is taken care of by the `build` target in the main Prometheus `Makefile` when building the full binary.
+**NOTE:** You will likely not need to do this directly. Instead, this is taken care of by the `build` target in the main AI MonitorIQ `Makefile` when building the full binary.
 
 ### Upgrading npm dependencies
 
@@ -112,36 +112,36 @@ Then, run `npm install` in `web/ui` and `web/ui/react-app` directories, but not 
 
 ### Integration into Prometheus
 
-To build a Prometheus binary that includes a compiled-in version of the production build of both React app versions, change to the
+To build an AI MonitorIQ binary that includes a compiled-in version of the production build of both React app versions, change to the
 root of the repository and run:
 
 ```bash
 make build
 ```
 
-This installs dependencies via npm, builds a production build of both React apps, and then finally compiles in all web assets into the Prometheus binary.
+This installs dependencies via npm, builds a production build of both React apps, and then finally compiles in all web assets into the AI MonitorIQ binary.
 
 ### Serving UI assets from the filesystem
 
-By default, the built web assets are compressed (via the main Makefile) and statically compiled into the Prometheus binary using Go's `embed` package.
+By default, the built web assets are compressed (via the main Makefile) and statically compiled into the AI MonitorIQ binary using Go's `embed` package.
 
-During development it can be convenient to tell the Prometheus server to always serve its web assets from the local filesystem (in the `web/ui/static` build output directory) without having to recompile the Go binary. To make this work, remove the `builtinassets` build tag in the `flags` entry in `.promu.yml`, and then run `make build` (or build Prometheus using `go build ./cmd/prometheus`).
+During development it can be convenient to tell the AI MonitorIQ server to always serve its web assets from the local filesystem (in the `web/ui/static` build output directory) without having to recompile the Go binary. To make this work, remove the `builtinassets` build tag in the `flags` entry in `.promu.yml`, and then run `make build` (or build AI MonitorIQ using `go build ./cmd/aimonitoriq`).
 
 Note that in most cases, it is even more convenient to just use the development web server via `npm start` as mentioned above, since serving web assets like this from the filesystem still requires rebuilding those assets via `make ui-build` (or `npm run build`) before they can be served.
 
 ### Using prebuilt UI assets
 
-If you are only working on the Prometheus Go backend and don't want to bother with the dependencies or the time required for producing UI builds, you can use the prebuilt web UI assets available with each Prometheus release (`prometheus-web-ui-<version>.tar.gz`). This allows you to skip building the UI from source.
+If you are only working on the AI MonitorIQ Go backend and don't want to bother with the dependencies or the time required for producing UI builds, you can use the prebuilt web UI assets available with each AI MonitorIQ release (`aimonitoriq-web-ui-<version>.tar.gz`). This allows you to skip building the UI from source.
 
 1. Download and extract the prebuilt UI tarball:
    ```bash
-   tar -xvf prometheus-web-ui-<version>.tar.gz -C web/ui
+   tar -xvf aimonitoriq-web-ui-<version>.tar.gz -C web/ui
    ```
 
-2. Build Prometheus using the prebuilt assets by passing the following parameter
+2. Build AI MonitorIQ using the prebuilt assets by passing the following parameter
    to `make`:
    ```bash
    make PREBUILT_ASSETS_STATIC_DIR=web/ui/static build
    ```
 
-This will include the prebuilt UI files directly in the Prometheus binary, avoiding the need to install npm or rebuild the frontend from source.
+This will include the prebuilt UI files directly in the AI MonitorIQ binary, avoiding the need to install npm or rebuild the frontend from source.

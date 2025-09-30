@@ -2,12 +2,12 @@
 # todo: internal
 ---
 
-# Prometheus
+# AI MonitorIQ
 
-Welcome to the documentation of the Prometheus server.
+Welcome to the documentation of the AI MonitorIQ server.
 
 The documentation is available alongside all the project documentation at
-[prometheus.io](https://prometheus.io/docs/prometheus/latest/).
+[aimonitoriq.com](https://aimonitoriq.com/docs/aimonitoriq/latest/).
 
 ## Content
 
